@@ -1,11 +1,67 @@
-* dio默认是支持设置baseUrl的，但是我们项目有好几个baseUrl
-* 可设置默认的超时时间，但可以通过自己设置覆盖
-
 ## feature
+- [x] Get,Post异步请求
+- [ ] Get,Post同步请求
+- [x] 单个文件上传，多个文件上传
+- [x] 文件下载
+- [x] 日志打印
+- [x] 实现cookie管理（基于内存的）
+- [x] 各种请求传参
+- [x] 统一封装处理网络错误提示
+- [x] 设置默认connectTimeout
+- [ ] 支持缓存
+- [ ] 重试
+- [x] 取消网络请求
 
 ## 使用
 1. 调用`HttpUtils.init()`方法进行初始化
 2. 调用`HttpUtils`中提供的静态方法进行网络请求
 
-## 调用方
+通用请求头，让调用方自己管理。不同的业务模块可能不同，放在lib里面不好
+```dart
+// 获取通用的请求头
+Options _getCommonOptions() {
+  return Options();
+}
+```
+
+虽然lib提供了baseUrl的设置，但是很多项目不止一个baseUrl。所以干脆让调用方自己管理url
+```dart
+// 获取完整的api地址
+String _getApiUrl(String api) {
+  return "host:$api";
+}
+```
+
+网络错误提示和token失效后跳转到登录页面的处理
+```dart
+    // 有的api喜欢把response封装为code,message,data。在这里可以统一判断请求结果
+    responseHandler(Response response) {
+      if (!_isSuccess(response)) {
+        // response中返回失败，则提示网络错误
+        _showNetErrorTip();
+      }
+    }
+
+    netErrorHandler(NetError error) {
+      switch (error) {
+        case NetError.timeout:
+          _showNetErrorTip();
+          break;
+        case NetError.other:
+          _showNetErrorTip();
+          break;
+        case NetError.cancel:
+          _showNetErrorTip();
+          break;
+        case NetError.unauthorized:
+          _onUnauthorized();
+          break;
+      }
+    }
+
+    HttpUtils.init(responseHandler: responseHandler, netErrorHandler:  netErrorHandler);
+```
+
+
+
 
