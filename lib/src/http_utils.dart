@@ -5,16 +5,19 @@ import 'error_interceptor.dart';
 import 'response_interceptor.dart';
 
 /// 通用的请求头
-typedef GetCommonHeader = Map<String, dynamic> Function();
+typedef GetDefaultHeader = Map<String, dynamic> Function();
 
 /// 网络请求的utils
 class HttpUtils {
   /// response 拦截器
   static ResponseHandler? _responseHandler;
+
   /// 网络请求错误拦截器
   static NetErrorHandler? _netErrorHandler;
+
   /// 注入通用请求头
-  static GetCommonHeader? _getCommonHeader;
+  static GetDefaultHeader? _getDefaultHeader;
+
   /// 超时时间
   static int _connectTimeout = 30000;
   static CookieJar cookieJar = CookieJar();
@@ -29,26 +32,31 @@ class HttpUtils {
       {int? connectTimeout,
       NetErrorHandler? netErrorHandler,
       ResponseHandler? responseHandler,
-      GetCommonHeader? getCommonHeader,
+      GetDefaultHeader? getDefaultHeader,
       String? baseUrl,
       bool enableLog = true}) {
     _connectTimeout = connectTimeout ?? _connectTimeout;
     _netErrorHandler = netErrorHandler;
     _responseHandler = responseHandler;
-    _getCommonHeader = getCommonHeader;
+    _getDefaultHeader = getDefaultHeader;
     _baseUrl = baseUrl;
     _enableLog = enableLog;
   }
 
-  static Future<Dio> _getDio() async {
+  static Future<Dio> _getDio(Map<String, dynamic>? headers) async {
     var dio = Dio();
     // set default timeout
     dio.options.connectTimeout = _connectTimeout;
     if (null != _baseUrl) {
       dio.options.baseUrl = _baseUrl!;
     }
-    if (null != _getCommonHeader) {
-      dio.options.headers = _getCommonHeader!.call();
+    // 如果用户有设置header则使用用户的，否则使用默认的header
+    if (null != headers) {
+      dio.options.headers = headers;
+    } else {
+      if (null != _getDefaultHeader) {
+        dio.options.headers = _getDefaultHeader!.call();
+      }
     }
 
     // set interceptor
@@ -70,7 +78,7 @@ class HttpUtils {
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
   }) async {
-    var dio = await _getDio();
+    var dio = await _getDio(options?.headers);
     return await dio.get(path,
         queryParameters: queryParameters,
         options: options,
@@ -88,7 +96,7 @@ class HttpUtils {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    var dio = await _getDio();
+    var dio = await _getDio(options?.headers);
     return await dio.post(path,
         data: data,
         queryParameters: queryParameters,
@@ -111,7 +119,7 @@ class HttpUtils {
       'file': await MultipartFile.fromFile(filePath),
     });
     var queryParameters = {"Content-Type": "multipart/form-data"};
-    var dio = await _getDio();
+    var dio = await _getDio(options?.headers);
     return await dio.post(path,
         data: formData,
         queryParameters: queryParameters,
@@ -135,7 +143,7 @@ class HttpUtils {
       formData.files.add(MapEntry('files', MultipartFile.fromFileSync(file)));
     }
     var queryParameters = {"Content-Type": "multipart/form-data"};
-    var dio = await _getDio();
+    var dio = await _getDio(options?.headers);
     return await dio.post(path,
         data: formData,
         queryParameters: queryParameters,
@@ -157,7 +165,7 @@ class HttpUtils {
     data,
     Options? options,
   }) async {
-    var dio = await _getDio();
+    var dio = await _getDio(options?.headers);
     return await dio.download(urlPath, savePath,
         onReceiveProgress: onReceiveProgress,
         queryParameters: queryParameters,
