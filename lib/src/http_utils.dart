@@ -4,32 +4,38 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'error_interceptor.dart';
 import 'response_interceptor.dart';
 
+/// 通用的请求头
+typedef GetCommonHeader = Map<String, dynamic> Function();
+
 /// 网络请求的utils
 class HttpUtils {
-  // 超时时间
-  static const int connectTimeout = 30000;
-
+  /// response 拦截器
   static ResponseHandler? _responseHandler;
-
+  /// 网络请求错误拦截器
   static NetErrorHandler? _netErrorHandler;
-
+  /// 注入通用请求头
+  static GetCommonHeader? _getCommonHeader;
+  /// 超时时间
   static int _connectTimeout = 30000;
   static CookieJar cookieJar = CookieJar();
   static String? _baseUrl;
   static bool _enableLog = true;
 
   static get responseHandler => _responseHandler;
+
   static get netErrorHandler => _netErrorHandler;
 
   static void init(
       {int? connectTimeout,
       NetErrorHandler? netErrorHandler,
       ResponseHandler? responseHandler,
+      GetCommonHeader? getCommonHeader,
       String? baseUrl,
       bool enableLog = true}) {
     _connectTimeout = connectTimeout ?? _connectTimeout;
     _netErrorHandler = netErrorHandler;
     _responseHandler = responseHandler;
+    _getCommonHeader = getCommonHeader;
     _baseUrl = baseUrl;
     _enableLog = enableLog;
   }
@@ -40,6 +46,9 @@ class HttpUtils {
     dio.options.connectTimeout = _connectTimeout;
     if (null != _baseUrl) {
       dio.options.baseUrl = _baseUrl!;
+    }
+    if (null != _getCommonHeader) {
+      dio.options.headers = _getCommonHeader!.call();
     }
 
     // set interceptor

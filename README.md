@@ -10,6 +10,7 @@
 - [x] 各种请求传参
 - [x] 统一封装处理网络错误提示
 - [x] 设置默认connectTimeout
+- [x] 设置默认的请求头，也可请求的时候单独设置
 - [ ] 支持缓存
 - [ ] 重试
 - [x] 取消网络请求
@@ -18,13 +19,6 @@
 1. 调用`HttpUtils.init()`方法进行初始化
 2. 调用`HttpUtils`中提供的静态方法进行网络请求
 
-通用请求头，让调用方自己管理。不同的业务模块可能不同，放在lib里面不好
-```dart
-// 获取通用的请求头
-Options _getCommonOptions() {
-  return Options();
-}
-```
 
 虽然lib提供了baseUrl的设置，但是很多项目不止一个baseUrl。所以干脆让调用方自己管理url
 ```dart

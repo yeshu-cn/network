@@ -1,6 +1,6 @@
-name: network
+name: lib_network
 description: Flutter project network module.
-version: 0.0.1
+version: 0.0.2
 homepage:
 repository: https://github.com/yeshu-cn/network
 
@@ -22,4 +22,4 @@ dev_dependencies:
 
 flutter:
 
-# publish_to: https://pub.dev
+# publish_to: https://pub.dartlang.org
