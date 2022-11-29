@@ -49,7 +49,7 @@ void main() {
       return header;
     }
 
-    HttpUtils.init(
+    HttpUtils.baseConfig(
         responseHandler: responseHandler,
         netErrorHandler: netErrorHandler,
         baseUrl: 'baseUrl',

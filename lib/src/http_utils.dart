@@ -28,7 +28,7 @@ class HttpUtils {
 
   static get netErrorHandler => _netErrorHandler;
 
-  static void init(
+  static void baseConfig(
       {int? connectTimeout,
       NetErrorHandler? netErrorHandler,
       ResponseHandler? responseHandler,
