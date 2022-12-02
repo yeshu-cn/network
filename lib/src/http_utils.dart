@@ -1,6 +1,7 @@
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:lib_network/src/request_interceptor.dart';
 import 'error_interceptor.dart';
 import 'response_interceptor.dart';
 
@@ -23,6 +24,7 @@ class HttpUtils {
   static CookieJar cookieJar = CookieJar();
   static String? _baseUrl;
   static bool _enableLog = true;
+  static bool _enableAppLog = false;
 
   static get responseHandler => _responseHandler;
 
@@ -34,13 +36,15 @@ class HttpUtils {
       ResponseHandler? responseHandler,
       GetDefaultHeader? getDefaultHeader,
       String? baseUrl,
-      bool enableLog = true}) {
+      bool enableLog = true,
+      bool enableAppLog = false}) {
     _connectTimeout = connectTimeout ?? _connectTimeout;
     _netErrorHandler = netErrorHandler;
     _responseHandler = responseHandler;
     _getDefaultHeader = getDefaultHeader;
     _baseUrl = baseUrl;
     _enableLog = enableLog;
+    _enableAppLog = enableAppLog;
   }
 
   static Future<Dio> _getDio(Map<String, dynamic>? headers) async {
@@ -60,6 +64,9 @@ class HttpUtils {
     }
 
     // set interceptor
+    if (_enableAppLog) {
+      dio.interceptors.add(RequestInterceptor());
+    }
     dio.interceptors.add(ErrorInterceptor());
     dio.interceptors.add(ResponseInterceptor());
     dio.interceptors.add(CookieManager(cookieJar));
