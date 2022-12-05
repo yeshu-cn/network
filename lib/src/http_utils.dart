@@ -30,6 +30,8 @@ class HttpUtils {
 
   static get netErrorHandler => _netErrorHandler;
 
+  static get defaultHeader => _getDefaultHeader;
+
   static void baseConfig(
       {int? connectTimeout,
       NetErrorHandler? netErrorHandler,
