@@ -35,7 +35,7 @@ initHttp() {
       baseUrl: "https://api.github.com");
 }
 
-Map<String, dynamic> _getDefaultHeader() {
+Future<Map<String, dynamic>> _getDefaultHeader() async {
   var header = {"Content-Type": "application/json"};
   return header;
 }

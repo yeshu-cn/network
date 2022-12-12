@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lib_network/lib_network.dart';
 
@@ -42,7 +41,7 @@ void main() {
       }
     }
 
-    getDefaultHeader() {
+    getDefaultHeader() async {
       var header = {"Content-Type": "application/json"};
       var token = '';
       header['token'] = token;

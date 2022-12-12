@@ -6,7 +6,7 @@ import 'error_interceptor.dart';
 import 'response_interceptor.dart';
 
 /// 通用的请求头
-typedef GetDefaultHeader = Map<String, dynamic> Function();
+typedef GetDefaultHeader = Future<Map<String, dynamic>> Function();
 
 /// 网络请求的utils
 class HttpUtils {
@@ -61,7 +61,7 @@ class HttpUtils {
       dio.options.headers = headers;
     } else {
       if (null != _getDefaultHeader) {
-        dio.options.headers = _getDefaultHeader!.call();
+        dio.options.headers = await _getDefaultHeader!.call();
       }
     }
 
