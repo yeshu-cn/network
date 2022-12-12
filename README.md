@@ -102,3 +102,5 @@ test('use custom header', () async {
 });
 ```
 
+## 发布lib命令
+dart pub publish --server=https://pub.dartlang.org
