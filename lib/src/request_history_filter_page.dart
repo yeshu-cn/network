@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:lib_network/src/request_history_filter_page.dart';
 import 'package:lib_network/src/request_record.dart';
 import 'package:lib_network/src/http_request_detail_page.dart';
 import 'package:lib_network/src/request_record_repository.dart';
 
-class RequestHistoryPage extends StatefulWidget {
-  const RequestHistoryPage({Key? key}) : super(key: key);
+class RequestHistoryFilterPage extends StatefulWidget {
+  final String url;
+  const RequestHistoryFilterPage({Key? key, required this.url}) : super(key: key);
 
   @override
-  State<RequestHistoryPage> createState() => _RequestHistoryPageState();
+  State<RequestHistoryFilterPage> createState() => _RequestHistoryFilterPageState();
 }
 
-class _RequestHistoryPageState extends State<RequestHistoryPage> {
+class _RequestHistoryFilterPageState extends State<RequestHistoryFilterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Http Request Logs'),
+        title: Text(widget.url),
       ),
       body: Scrollbar(
         child: ListView.separated(
           itemBuilder: (BuildContext context, int index) {
-            var record = RequestRecordRepository.getInstance().getRecordList()[index];
+            var record = RequestRecordRepository.getInstance().getRecordListByUrl(widget.url)[index];
             return _buildItem(record);
           },
-          itemCount: RequestRecordRepository.getInstance().getRecordList().length,
+          itemCount: RequestRecordRepository.getInstance().getRecordListByUrl(widget.url).length,
           separatorBuilder: (BuildContext context, int index) {
             return const Divider();
           },
@@ -47,9 +47,6 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
         ],
       ),
       subtitle: Text(options.uri.toString()),
-      onLongPress: () {
-        _showFilterDialog(record.requestOptions.uri.path);
-      },
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -71,47 +68,11 @@ class _RequestHistoryPageState extends State<RequestHistoryPage> {
   }
 
   Widget _buildStatusCode(int? code) {
-    return Text(
-      ' $code',
-      style: TextStyle(color: _getStatusCodeColor(code)),
-    );
+    return Text(' $code', style: TextStyle(color: _getStatusCodeColor(code)),);
   }
 
   String _formatRequestTime(DateTime dateTime) {
     var format = DateFormat('yyyy-MM-dd hh:mm:ss');
     return format.format(dateTime);
-  }
-
-  Future<void> _showFilterDialog(String url) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Filter request by: $url'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Confirm'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => RequestHistoryFilterPage(
-                      url: url,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 }

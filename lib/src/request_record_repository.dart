@@ -6,7 +6,7 @@ import 'package:lib_network/src/request_record.dart';
 class RequestRecordRepository {
   final LinkedHashMap<String, RequestRecord> logMap = LinkedHashMap();
 
-  int capacity = 50;
+  int capacity = 100;
 
   static final RequestRecordRepository _instance = RequestRecordRepository._singleton();
 
@@ -18,6 +18,10 @@ class RequestRecordRepository {
 
   List<RequestRecord> getRecordList() {
     return logMap.values.toList();
+  }
+
+  List<RequestRecord> getRecordListByUrl(String url) {
+    return logMap.values.toList().where((element) => element.requestOptions.uri.path == url).toList();
   }
 
   void onError(DioError dioError) {
