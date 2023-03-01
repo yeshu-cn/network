@@ -76,8 +76,8 @@ void main() {
   test("custom time out", ()  async {
     // 设置请求头
     Options options = Options();
-    options.receiveTimeout = 30 * 1000;
-    options.sendTimeout = 30 * 1000;
+    options.receiveTimeout = const Duration(milliseconds: 30 * 1000);
+    options.sendTimeout = const Duration(milliseconds: 30 * 1000);
 
     // 设置post请求参数
     var data = {};

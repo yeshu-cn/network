@@ -1,6 +1,6 @@
 name: lib_network
 description: Flutter project network module.
-version: 0.0.7
+version: 0.0.8
 homepage:
 repository: https://github.com/yeshu-cn/network
 
@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   dio_cookie_manager: ^2.0.0
   cookie_jar: ^3.0.1
-  dio: ^4.0.6
+  dio: ^5.0.1
   intl: ^0.18.0
 
 dev_dependencies:

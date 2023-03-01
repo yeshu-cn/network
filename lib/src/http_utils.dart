@@ -52,7 +52,7 @@ class HttpUtils {
   static Future<Dio> _getDio(Map<String, dynamic>? headers) async {
     var dio = Dio();
     // set default timeout
-    dio.options.connectTimeout = _connectTimeout;
+    dio.options.connectTimeout = Duration(milliseconds: _connectTimeout);
     if (null != _baseUrl) {
       dio.options.baseUrl = _baseUrl!;
     }

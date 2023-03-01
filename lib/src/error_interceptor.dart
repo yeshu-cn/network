@@ -21,12 +21,12 @@ class ErrorInterceptor extends Interceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) {
     switch (err.type) {
-      case DioErrorType.connectTimeout:
+      case DioErrorType.connectionTimeout:
       case DioErrorType.receiveTimeout:
       case DioErrorType.sendTimeout:
         HttpUtils.netErrorHandler?.call(NetError.timeout);
         break;
-      case DioErrorType.response:
+      case DioErrorType.badResponse:
         if (401 == err.response!.statusCode) {
           // 401，这里只把401当作未授权，404,403,都当作其他错误处理
           HttpUtils.netErrorHandler?.call(NetError.unauthorized);
@@ -37,7 +37,7 @@ class ErrorInterceptor extends Interceptor {
       case DioErrorType.cancel:
         HttpUtils.netErrorHandler?.call(NetError.cancel);
         break;
-      case DioErrorType.other:
+      case DioErrorType.unknown:
         HttpUtils.netErrorHandler?.call(NetError.other);
         break;
       default:
