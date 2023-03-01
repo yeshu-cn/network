@@ -1,6 +1,6 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+* init project
 
 ## 0.0.2
 * 添加通用请求头的配置
@@ -21,4 +21,4 @@
 * 网络请求日志增加时间显示，长按显示过滤后的api请求
 
 ## 0.0.8
-* 升级dio依赖
+* 升级dio版本为5.0.1

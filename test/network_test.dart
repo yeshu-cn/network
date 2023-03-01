@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lib_network/lib_network.dart';
 
@@ -17,7 +18,7 @@ void main() {
             onUnauthorized(msg);
           }
         } catch (e) {
-          print(e.toString());
+          debugPrint(e.toString());
         }
       }
     }
@@ -60,7 +61,7 @@ void main() {
     // 设置post请求参数
     var data = {};
     data["uid"] = 'uid';
-    var response = await HttpUtils.post(_getApiUrl('/postApi'), data: data);
+    await HttpUtils.post(_getApiUrl('/postApi'), data: data);
   });
 
   test('use custom header', () async {
@@ -70,7 +71,7 @@ void main() {
     // 设置post请求参数
     var data = {};
     data["uid"] = 'uid';
-    var response = await HttpUtils.post(_getApiUrl('/postApi'), options: options, data: data);
+    await HttpUtils.post(_getApiUrl('/postApi'), options: options, data: data);
   });
 
   test("custom time out", ()  async {
@@ -82,7 +83,7 @@ void main() {
     // 设置post请求参数
     var data = {};
     data["uid"] = 'uid';
-    var response = await HttpUtils.post(_getApiUrl('/postApi'), options: options, data: data);
+    await HttpUtils.post(_getApiUrl('/postApi'), options: options, data: data);
   });
 
 }
