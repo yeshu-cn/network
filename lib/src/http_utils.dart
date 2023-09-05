@@ -162,6 +162,26 @@ class HttpUtils {
         onReceiveProgress: onReceiveProgress);
   }
 
+  /// upload form data
+  static Future<Response<T>> uploadFormData<T>(
+      String path, {
+        required FormData formData,
+        Options? options,
+        CancelToken? cancelToken,
+        ProgressCallback? onSendProgress,
+        ProgressCallback? onReceiveProgress,
+      }) async {
+    var queryParameters = {"Content-Type": "multipart/form-data"};
+    var dio = await _getDio(options?.headers);
+    return await dio.post(path,
+        data: formData,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress);
+  }
+
   /// download file
   static Future<Response> download(
     String urlPath,
