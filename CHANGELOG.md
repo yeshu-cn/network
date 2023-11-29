@@ -25,3 +25,9 @@
 
 ## 0.0.9
 * 增加提交表单数据的接口
+
+## 0.0.10
+* web环境不需要配置cookie管理
+
+## 0.0.11
+* add put and delete method

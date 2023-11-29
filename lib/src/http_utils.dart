@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:flutter/foundation.dart';
 import 'package:lib_network/src/request_interceptor.dart';
 import 'error_interceptor.dart';
 import 'response_interceptor.dart';
@@ -23,7 +25,9 @@ class HttpUtils {
   static int _connectTimeout = 30000;
   static CookieJar cookieJar = CookieJar();
   static String? _baseUrl;
+  /// 启用日志打印
   static bool _enableLog = true;
+  /// 启用应用程序中的日志界面
   static bool _enableAppLog = false;
 
   static get responseHandler => _responseHandler;
@@ -71,7 +75,11 @@ class HttpUtils {
     }
     dio.interceptors.add(ErrorInterceptor());
     dio.interceptors.add(ResponseInterceptor());
-    dio.interceptors.add(CookieManager(cookieJar));
+    // web环境不需要cookie
+    if (!kIsWeb) {
+      dio.interceptors.add(CookieManager(cookieJar));
+    }
+
     if (_enableLog) {
       dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
     }
@@ -113,6 +121,45 @@ class HttpUtils {
         cancelToken: cancelToken,
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress);
+  }
+
+  /// put
+  static Future<Response<T>> put<T>(
+    String path, {
+    data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    var dio = await _getDio(options?.headers);
+    return await dio.put(path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress);
+  }
+
+  /// delete
+  static Future<Response<T>> delete<T>(
+    String path, {
+    data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    var dio = await _getDio(options?.headers);
+    return await dio.delete(path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+    );
   }
 
   /// upload file
