@@ -25,10 +25,15 @@ class HttpUtils {
   static int _connectTimeout = 30000;
   static CookieJar cookieJar = CookieJar();
   static String? _baseUrl;
+
   /// 启用日志打印
   static bool _enableLog = true;
+
   /// 启用应用程序中的日志界面
   static bool _enableAppLog = false;
+
+  /// 自定义拦截器列表
+  static List<Interceptor> _customInterceptors = [];
 
   static get responseHandler => _responseHandler;
 
@@ -36,14 +41,16 @@ class HttpUtils {
 
   static get defaultHeader => _getDefaultHeader;
 
-  static void baseConfig(
-      {int? connectTimeout,
-      NetErrorHandler? netErrorHandler,
-      ResponseHandler? responseHandler,
-      GetDefaultHeader? getDefaultHeader,
-      String? baseUrl,
-      bool enableLog = true,
-      bool enableAppLog = false}) {
+  static void baseConfig({
+    int? connectTimeout,
+    NetErrorHandler? netErrorHandler,
+    ResponseHandler? responseHandler,
+    GetDefaultHeader? getDefaultHeader,
+    String? baseUrl,
+    bool enableLog = true,
+    bool enableAppLog = false,
+    List<Interceptor>? interceptors,
+  }) {
     _connectTimeout = connectTimeout ?? _connectTimeout;
     _netErrorHandler = netErrorHandler;
     _responseHandler = responseHandler;
@@ -51,6 +58,9 @@ class HttpUtils {
     _baseUrl = baseUrl;
     _enableLog = enableLog;
     _enableAppLog = enableAppLog;
+    if (null != interceptors) {
+      _customInterceptors = interceptors;
+    }
   }
 
   static Future<Dio> _getDio(Map<String, dynamic>? headers) async {
@@ -67,6 +77,11 @@ class HttpUtils {
       if (null != _getDefaultHeader) {
         dio.options.headers = await _getDefaultHeader!.call();
       }
+    }
+
+    // 添加自定义拦截器（优先添加，保证最先执行）
+    if (_customInterceptors.isNotEmpty) {
+      dio.interceptors.addAll(_customInterceptors);
     }
 
     // set interceptor
@@ -154,11 +169,12 @@ class HttpUtils {
     ProgressCallback? onReceiveProgress,
   }) async {
     var dio = await _getDio(options?.headers);
-    return await dio.delete(path,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-        cancelToken: cancelToken,
+    return await dio.delete(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
     );
   }
 
@@ -211,13 +227,13 @@ class HttpUtils {
 
   /// upload form data
   static Future<Response<T>> uploadFormData<T>(
-      String path, {
-        required FormData formData,
-        Options? options,
-        CancelToken? cancelToken,
-        ProgressCallback? onSendProgress,
-        ProgressCallback? onReceiveProgress,
-      }) async {
+    String path, {
+    required FormData formData,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
     var queryParameters = {"Content-Type": "multipart/form-data"};
     var dio = await _getDio(options?.headers);
     return await dio.post(path,

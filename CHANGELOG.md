@@ -34,3 +34,6 @@
 
 ## 0.0.12
 * update dependencies
+
+## 0.0.13
+* add custom interceptors
