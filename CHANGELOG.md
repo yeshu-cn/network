@@ -31,3 +31,6 @@
 
 ## 0.0.11
 * add put and delete method
+
+## 0.0.12
+* update dependencies
